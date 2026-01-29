@@ -1,0 +1,29 @@
+{% load static %}
+<header class="home-site-header">
+  <div id="logo-and-button">
+    <a href="{% url 'home' %}" class="brand">
+      <img
+        src="{% static 'portale/images/zilio_logo.png' %}"
+        alt="Logo Zilio Group"
+        class="logo"
+      />
+    </a>
+    <button
+      id="toggle-sidebar"
+      class="btn-toggle"
+      type="button"
+      aria-expanded="true"
+      aria-controls="lista-impianti"
+    >
+      Nascondi lista
+    </button>
+  </div>
+
+  <h1>Portale Hydro 3.0</h1>
+  <nav class="home-header-nav">
+    <ul>
+      <li><a href="{% url 'facilities_map' %}">Mappa</a></li>
+      <li><a href="{% url 'home'%}">Misuratori</a></li>
+    </ul>
+  </nav>
+</header>

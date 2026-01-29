@@ -1,0 +1,16 @@
+Ultimo update - 29/01/2026
+
+Prima di leggere è bene sapere che comunque questo è il mio primo progetto django. Chiaramente ci saranno errori o logiche implementate dalla dubbia logica. Tuttavia, ho cercato di fare tutto in modo abbastanza pulito, usando nomi intuitivi e seguendo delle "buone" (opinabile) pratiche di progettazione. In ogni caso questo documento è più una guida e non è detto che tutto sia corretto. Quindi non prendetela come la Bibbia e chiedetevi sempre se quello che sto leggendo sia vero. Dubitate sempre insomma, non si sa mai. 
+
+
+
+
+# Problemi principali ancora presenti (non affrontati) 29/01/2026
+
+- Gestione connessioni DB per evento: ad ogni evento apri/chiudi una nuova connessione. Su carichi continui può saturare il DB o creare latenza inutile. Serve un pool o una connessione riutilizzata. main_00.py
+- Retry minimo e senza backoff reale: hai solo 1 retry con sleep(1). Se il DB resta giù per più tempo, perdi eventi (return) e non fai checkpoint. main_00.py
+- Checkpoint solo dopo insert riuscito: se un evento fallisce l’insert, il checkpoint non viene aggiornato e quell’evento verrà riprocessato all’infinito (potenziale loop). main_00.py
+- Throttle per device con stato in RAM: LAST_EVENT_TS_BY_ID cresce senza limite se i device sono tanti e non ha scadenza. Con mesi di runtime può consumare RAM. main_00.py
+- Threading senza shutdown pulito: i consumer sono in thread daemon, quindi in stop forzato non hai garanzie su flush/checkpoint/close. main_00.py
+- Nessun controllo su payload invalido parziale: se values è dict ma contiene misure non conformi, salti semplicemente senza logging strutturato; è difficile capire quali device generano dati sporchi. main_00.py
+- Se vuoi, posso affrontarli in ordine di impatto con cambi minimi (pool connessioni + retry/backoff + cleanup state).

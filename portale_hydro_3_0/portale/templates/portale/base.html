@@ -1,0 +1,20 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title %}Portale{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'portale/css/style.css' %}" />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    {% include 'portale/includes/header.html' %}
+        <main class="site-main container">
+            {% block content %}{% endblock %}
+        </main>
+    {% include 'portale/includes/footer.html' %} 
+    {% block extra_scripts %}{%endblock %}
+  </body>
+</html>
