@@ -1,16 +1,15 @@
 WITH params AS (
     SELECT
-        date_trunc('hour', now()) AS window_end,
-        date_trunc('hour', now()) - interval '{WINDOW_HOURS} hours' AS window_start
+        {WINDOW_END} AS window_end,
+        {WINDOW_START} AS window_start
 ),
 data AS (
     SELECT
         id_misuratore,
         flow_ls_smoothed AS value
     FROM hydro.tab_measurements_clean
-    WHERE data_misurazione >= (SELECT window_start FROM params)
-        AND data_misurazione < (SELECT window_end FROM params)
-        AND flow_ls_smoothed IS NOT NULL
+    WHERE {WINDOW_FILTER}
+      AND flow_ls_smoothed IS NOT NULL
 ),
 ranges AS (
     SELECT

@@ -154,7 +154,38 @@ document.addEventListener("DOMContentLoaded", () => {
       color: "#16a34a",
       fillColor: "rgba(22, 163, 74, 0.18)",
       fill: false,
+      useApi: true,
+      apiMode: "flow_histogram",
+      xScaleType: "linear",
+      xTitle: "Portata (l/s)",
+      yTitle: "Distribuzione (%)",
+      xTicksCallback: (value) => value,
+      xTicksDisplay: true,
+      tooltipTitle: (items) => {
+        if (!items.length) {
+          return "";
+        }
+        const item = items[0];
+        const start = item?.chart?._histRanges?.[item.dataIndex]?.start;
+        const end = item?.chart?._histRanges?.[item.dataIndex]?.end;
+        if (Number.isFinite(start) && Number.isFinite(end)) {
+          return `${start.toFixed(2)} - ${end.toFixed(2)} l/s`;
+        }
+        return `${Number(item.parsed.x).toFixed(2)} l/s`;
+      },
       showAverage: false,
+      yTickPrecision: 0,
+      datasets: [
+        {
+          label: "Distribuzione",
+          color: "#2563eb",
+          fillColor: "rgba(37, 99, 235, 0.35)",
+          fill: true,
+          source: "percent",
+          order: 1,
+          borderWidth: 1,
+        },
+      ],
     },
     {
       id: "chart-curva-di-durata",
@@ -263,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
         responsive: true,
         maintainAspectRatio: false,
         interaction: {
-          mode: "index",
+          mode: cfg.type === "bar" ? "nearest" : "index",
           intersect: false,
         },
         plugins: {
@@ -281,13 +312,26 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           hoverLine: {},
           tooltip: {
-            mode: "index",
+            mode: cfg.type === "bar" ? "nearest" : "index",
             intersect: false,
             callbacks: {
               title:
                 cfg.tooltipTitle ||
                 ((items) =>
                   items.length ? formatLabelTimestamp(items[0].label) : ""),
+              label: (context) => {
+                if (cfg.apiMode === "flow_histogram") {
+                  const index = context.dataIndex;
+                  const count = context.chart?._histCounts?.[index] ?? 0;
+                  const percent = context.chart?._histPercents?.[index] ?? 0;
+                  return `${percent.toFixed(2)}% (${count} punti)`;
+                }
+                const value = context.parsed?.y ?? context.parsed;
+                if (value === null || value === undefined) {
+                  return "";
+                }
+                return `${value}`;
+              },
             },
             backgroundColor: "rgba(17, 24, 39, 0.4)",
           },
@@ -320,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
             type: cfg.xScaleType,
             ticks: {
               callback: cfg.xTicksCallback,
-              display: false,
+              display: cfg.xTicksDisplay ?? false,
             },
             title: {
               display: Boolean(cfg.showRange || cfg.xTitle),
@@ -339,6 +383,11 @@ document.addEventListener("DOMContentLoaded", () => {
             beginAtZero: true,
             ticks: {
               maxTicksLimit: 5,
+              precision: cfg.yTickPrecision ?? 0,
+            },
+            title: {
+              display: Boolean(cfg.yTitle),
+              text: cfg.yTitle || "",
             },
             grid: {
               color: "#fff",
@@ -372,12 +421,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const apiBase =
         cfg.apiMode === "duration_curve"
           ? "/portale/api/duration-curve/"
-          : "/portale/api/measurements/";
+          : cfg.apiMode === "flow_histogram"
+            ? "/portale/api/flow-histogram/"
+            : "/portale/api/measurements/";
       const apiUrl = misuratoreId
-        ? `${apiBase}?id_misuratore=${encodeURIComponent(
-            misuratoreId
-          )}&range=${encodeURIComponent(rangeKey)}`
-        : `${apiBase}?range=${encodeURIComponent(rangeKey)}`;
+        ? cfg.apiMode === "flow_histogram"
+          ? `${apiBase}?id_misuratore=${encodeURIComponent(misuratoreId)}`
+          : `${apiBase}?id_misuratore=${encodeURIComponent(
+              misuratoreId
+            )}&range=${encodeURIComponent(rangeKey)}`
+        : cfg.apiMode === "flow_histogram"
+          ? apiBase
+          : `${apiBase}?range=${encodeURIComponent(rangeKey)}`;
 
       const loadApiData = () => {
         setLoading(true);
@@ -391,9 +446,12 @@ document.addEventListener("DOMContentLoaded", () => {
           .then((data) => {
             console.log(`[charts] refreshed ${cfg.id} (${rangeKey})`);
             const isDurationCurve = cfg.apiMode === "duration_curve";
+            const isHistogram = cfg.apiMode === "flow_histogram";
             const timestamps = isDurationCurve
               ? data?.exceedance_percent || []
-              : data?.timestamps || [];
+              : isHistogram
+                ? data?.range_start || []
+                : data?.timestamps || [];
             if (!Array.isArray(timestamps)) {
               return;
             }
@@ -407,14 +465,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 const parsed = Number(value);
                 return Number.isFinite(parsed) ? parsed : null;
               });
-              const useXYPoints = enableDecimation || isDurationCurve;
-              chart.data.datasets[index].data = useXYPoints
-                ? parsedValues.map((value, i) =>
-                    value === null ? null : { x: timestamps[i], y: value }
-                  )
-                : parsedValues;
+              if (isHistogram) {
+                const mids = (data?.range_start || []).map((start, i) => {
+                  const end = data?.range_end?.[i];
+                  if (end === null || end === undefined) {
+                    return Number(start);
+                  }
+                  return (Number(start) + Number(end)) / 2;
+                });
+                chart._histCounts = (data?.count || []).map((value) =>
+                  Number.isFinite(Number(value)) ? Number(value) : 0
+                );
+                chart._histPercents = (data?.percent || []).map((value) =>
+                  Number.isFinite(Number(value)) ? Number(value) : 0
+                );
+                chart._histRanges = (data?.range_start || []).map((start, i) => ({
+                  start: Number(start),
+                  end: Number(data?.range_end?.[i]),
+                }));
+                chart.data.datasets[index].data = parsedValues.map((value, i) =>
+                  value === null ? null : { x: mids[i], y: value }
+                );
+              } else {
+                const useXYPoints = enableDecimation || isDurationCurve;
+                chart.data.datasets[index].data = useXYPoints
+                  ? parsedValues.map((value, i) =>
+                      value === null ? null : { x: timestamps[i], y: value }
+                    )
+                  : parsedValues;
+              }
             });
-            applyRangeLabel(timestamps);
+            if (!isHistogram) {
+              applyRangeLabel(timestamps);
+            }
             let maxValue = 0;
             datasetConfigs.forEach((ds) => {
               const sourceValues = data[ds.source] || [];

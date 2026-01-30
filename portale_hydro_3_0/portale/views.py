@@ -141,6 +141,61 @@ def duration_curve_api(request):
     )
     return JsonResponse(data)
 
+def flow_histogram_api(request):
+    id_misuratore = request.GET.get("id_misuratore")
+    if not id_misuratore:
+        return JsonResponse(
+            {"error": "id_misuratore is required"},
+            status=400,
+        )
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            WITH latest AS (
+                SELECT MAX(updated_at) AS updated_at
+                FROM hydro.tab_flow_histogram
+                WHERE id_misuratore = %s
+            )
+            SELECT bin_index, range_start, range_end, count
+            FROM hydro.tab_flow_histogram
+            WHERE id_misuratore = %s
+              AND updated_at = (SELECT updated_at FROM latest)
+            ORDER BY bin_index
+            """,
+            [id_misuratore, id_misuratore],
+        )
+        rows = cursor.fetchall()
+
+    if not rows:
+        return JsonResponse(
+            {
+                "bin_index": [],
+                "range_start": [],
+                "range_end": [],
+                "count": [],
+            }
+        )
+
+    bin_index = [int(row[0]) for row in rows]
+    range_start = [float(row[1]) for row in rows]
+    range_end = [float(row[2]) for row in rows]
+    counts = [int(row[3]) for row in rows]
+    total = sum(counts)
+    percents = [
+        (count / total * 100) if total > 0 else 0.0
+        for count in counts
+    ]
+
+    return JsonResponse(
+        {
+            "bin_index": bin_index,
+            "range_start": range_start,
+            "range_end": range_end,
+            "count": counts,
+            "percent": percents,
+        }
+    )
 
 def misuratore_detail(request, id_misuratore):
     misuratore = (

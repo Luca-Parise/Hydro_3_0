@@ -10,6 +10,11 @@ urlpatterns = [
         views.duration_curve_api,
         name="duration_curve_api",
     ),
+    path(
+        "api/flow-histogram/",
+        views.flow_histogram_api,
+        name="flow_histogram_api",
+    ),
     path("misuratori/<str:id_misuratore>/", views.misuratore_detail, name="misuratore_detail",
     ),
 ]
