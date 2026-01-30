@@ -64,7 +64,7 @@ def start_clean_measurements_scheduler(interval_seconds=300):
     thread.start()
 
 def start_refresh_mv_scheduler(interval_seconds=86400):
-    # runs materualized view refresh in a background thread on a fixed interval
+    # runs materialized view refresh in a background thread on a fixed interval
     def loop():
         i = 1
         while True:
