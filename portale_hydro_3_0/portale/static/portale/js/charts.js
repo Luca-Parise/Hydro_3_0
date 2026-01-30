@@ -133,8 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           label: "Portata (smoothed)",
           color: "#2563eb",
-          // fillColor: "rgba(120, 234, 242, 0.58)",
-          fill: false,
+          fillColor: "rgba(83, 206, 255, 0.54)",
+          fill: true,
           source: "flow_ls_smoothed",
           order: 1,
           pointRadius: 0,
