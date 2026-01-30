@@ -8,34 +8,8 @@ from django.db.models import Max
 
 from .models import tab_measurements_clean, tab_misuratori, tab_statistiche_misuratori
 
-_LAST_MV_REFRESH_TS = 0.0
-_MV_REFRESH_INTERVAL_SEC = 24 * 60 * 60  # one day 86400 seconds
-
-
-def _refresh_duration_curve_mv_if_needed():
-    global _LAST_MV_REFRESH_TS
-    now = time.time()
-    if now - _LAST_MV_REFRESH_TS < _MV_REFRESH_INTERVAL_SEC:
-        return
-    try:
-        # NOTA: questo throttle vale solo per il singolo processo. In dev
-        # (auto-reload) o con più worker/processi, il refresh può comunque
-        # essere eseguito più di una volta al giorno. Un job schedulato
-        # (cron/Celery/pg_cron) sarebbe più affidabile.
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "REFRESH MATERIALIZED VIEW hydro.mv_flow_duration_curve_daily"
-            )
-        _LAST_MV_REFRESH_TS = now
-        print("[mv_refresh] mv_flow_duration_curve_daily refreshed")
-    except Exception as exc:
-        # Do not block the home view if refresh fails.
-        print(f"[mv_refresh] refresh failed: {exc}")
-
 
 def home(request):
-    # Non fare refresh qui: blocca il rendering della home finché la query non termina.
-    # Spostare il refresh su un job schedulato (cron/Celery/pg_cron).
     misuratori = tab_misuratori.objects.all()
     context = {
         "misuratori": misuratori,
