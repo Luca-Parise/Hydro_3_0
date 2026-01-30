@@ -76,3 +76,17 @@ if __name__ == "__main__":
         print(f"Finished processing file: {path}\n")
         
     print("All files processed.")
+
+
+FILE_MAP = {
+    "Gateway 1" : "./csv/out_01. Trebisacce.csv",
+    "Sessa_Auronca" : "./csv/out_10. Sessa Auronca.csv",
+    "Santissima" : "",
+    "SA6":"./csv/out_07. SA6.csv",
+    "SA3":"./csv/out_06. SA3.csv",
+    "Merone III salto":"./csv/out_04. Merone III salto.csv",
+    "Merone II salto":"./csv/out_03. Merone II salto.csv",
+    "Merone Camera di Manovra":"./csv/out_02. Merone Camera di manovra.csv",
+    "Fiumefreddi":"",
+    "CU4":"./csv/out_05. CU4.csv", 
+}
