@@ -100,13 +100,13 @@ WSGI_APPLICATION = 'portale_hydro_3_0.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "hydro",
-        'USER': "postgres",
-        'PASSWORD': "Daygum_2026",
-        'HOST': "localhost",
-        'PORT': "5432",
+        'NAME': os.getenv("DJANGO_DB_NAME", "hydro"),
+        'USER': os.getenv("DJANGO_DB_USER", "postgres"),
+        'PASSWORD': os.getenv("DJANGO_DB_PASSWORD", ""),
+        'HOST': os.getenv("DJANGO_DB_HOST", "localhost"),
+        'PORT': os.getenv("DJANGO_DB_PORT", "5432"),
         'OPTIONS': {
-            'options': '-c search_path=hydro',
+            'options': os.getenv("DJANGO_DB_OPTIONS", "-c search_path=hydro"),
         },
     }
 }

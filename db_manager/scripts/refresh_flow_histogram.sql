@@ -9,7 +9,7 @@ data AS (
         flow_ls_smoothed AS value
     FROM hydro.tab_measurements_clean
     WHERE {WINDOW_FILTER}
-      AND flow_ls_smoothed IS NOT NULL
+    AND flow_ls_smoothed IS NOT NULL
 ),
 ranges AS (
     SELECT

@@ -18,6 +18,12 @@ py -m db_manager.run
 Questo comando va lanciato da `C:\...\Hydra_3_0`.
 
 ### Requisiti
+Installa le dipendenze Python dal root del progetto:
+
+```
+py -m pip install -r requirements.txt
+```
+
 Il modulo legge la connessione al database dalle variabili d'ambiente:
 `PGHOST`, `PGPORT`, `PGDBNAME`, `PGUSER`, `PGPASSWORD`.
 
