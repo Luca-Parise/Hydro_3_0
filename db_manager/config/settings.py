@@ -25,7 +25,7 @@ SECONDS_BETWEEN_REFRESH_FLOW_HISTOGRAM = 86400  # 24 hours
 RAW_TABLE_NAME = "hydro.tab_measurements_raw"
 
 # Hampel filter parameters
-HAMPEL_WINDOW_SIZE = 100
+HAMPEL_WINDOW_SIZE = 49  # Must be odd
 HAMPEL_SIGMA_THRESHOLD = 3.5
 
 # Flow histogram parameters
