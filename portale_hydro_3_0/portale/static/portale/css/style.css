@@ -1187,3 +1187,15 @@ a:hover {
   color: var(--color-danger);
   font-weight: 600;
 }
+
+/* Hide header controls on login page, keep logo link */
+.login-page #toggle-sidebar,
+.login-page .home-header-nav {
+  display: none;
+}
+
+/* Disable logo link on login page */
+.login-page .home-site-header .brand {
+  pointer-events: none;
+  cursor: default;
+}
