@@ -27,7 +27,7 @@
       <li>
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
-          <button type="submit" class="logout-button" aria-label="Logout">
+          <button type="submit" class="logout-button" aria-label="Logout" title="Logout">
             <img
               src="{% static 'portale/images/logout_icon.png' %}"
               alt=""
