@@ -12,11 +12,11 @@
             <div class="login-form">
                 <h2>Login</h2>
 
-                {% if form.errors %}<p style="color: #dc2626; font-weight: 600;">Credenziali non valide</p>{% endif %}
+                {% if form.errors %}<p class="login-error">Credenziali non valide</p>{% endif %}
 
                 <form method="post">
                     {% csrf_token %}
-                    <div style="display: grid; gap: 12px;">
+                    <div class="login-fields">
                         <label>
                             Username
                             {{ form.username }}
@@ -25,7 +25,7 @@
                             Password
                             {{ form.password }}
                         </label>
-                        <button type="submit" class="btn-toggle" style="width: 100%;">Accedi</button>
+                        <button type="submit" class="btn-toggle login-submit">Accedi</button>
                     </div>
                 </form>
             </div>

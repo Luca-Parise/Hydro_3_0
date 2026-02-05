@@ -1112,19 +1112,19 @@ a:hover {
   justify-content: center;
   padding: 8px 16px;
   border-radius: 6px;
-  background: var(--color-red-light);
+  background: var(--color-danger-light);
   border: 1px solid rgba(107, 114, 128, 0.2);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .home-site-header nav .logout-button:hover {
-  background: var(--color-red-dark);
-  border-color: var(--color-red-dark);
+  background: var(--color-danger-dark);
+  border-color: var(--color-danger-dark);
 }
 
 .home-site-header nav .logout-button:focus-visible {
-  outline: 2px solid var(--color-red-dark);
+  outline: 2px solid var(--color-danger-dark);
   outline-offset: 2px;
 }
 
@@ -1137,7 +1137,7 @@ a:hover {
 /* Login layout with illustration */
 .login-card {
   width: min(900px, 100%);
-  margin: 0 auto;
+  margin: auto;
 }
 
 .login-layout {
@@ -1173,8 +1173,17 @@ a:hover {
   }
 }
 
-/* Center login card */
-.login-card {
-  max-width: fit-content;
-  margin: 6rem auto 0 auto;
+/* Login form helpers */
+.login-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.login-submit {
+  width: 100%;
+}
+
+.login-error {
+  color: var(--color-danger);
+  font-weight: 600;
 }
