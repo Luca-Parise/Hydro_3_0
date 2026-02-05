@@ -1183,7 +1183,7 @@ a:hover {
   width: 100%;
 }
 
-.login-error {
+.welcome-message .login-error {
   color: var(--color-danger);
   font-weight: 600;
 }
