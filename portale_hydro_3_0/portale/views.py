@@ -5,10 +5,11 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.db import connection
 from django.db.models import Max
+from django.contrib.auth.decorators import login_required
 
 from .models import tab_measurements_clean, tab_misuratori, tab_statistiche_misuratori
 
-
+@login_required
 def home(request):
     misuratori = tab_misuratori.objects.all()
     context = {
@@ -18,7 +19,7 @@ def home(request):
     }
     return render(request, "portale/home.html", context)
 
-
+@login_required
 def facilities_map(request):
     misuratori = tab_misuratori.objects.all()
     return render(request, "portale/facilities_map.html", {
@@ -26,7 +27,7 @@ def facilities_map(request):
         "title": "Facilities Map"
     })
 
-
+@login_required
 def measurements_api(request):
     id_misuratore = request.GET.get("id_misuratore")
     if not id_misuratore:
@@ -98,6 +99,7 @@ def measurements_api(request):
     return JsonResponse(data)
 
 
+@login_required
 def duration_curve_api(request):
     t0 = time.perf_counter()
     id_misuratore = request.GET.get("id_misuratore")
@@ -144,7 +146,7 @@ def duration_curve_api(request):
     )
     return JsonResponse(data)
 
-
+@login_required
 def flow_histogram_api(request):
     id_misuratore = request.GET.get("id_misuratore")
     if not id_misuratore:
@@ -201,7 +203,7 @@ def flow_histogram_api(request):
         }
     )
 
-
+@login_required
 def misuratore_detail(request, id_misuratore):
     misuratore = (
         tab_misuratori.objects.filter(id_misuratore=id_misuratore)
@@ -251,7 +253,7 @@ def misuratore_detail(request, id_misuratore):
     }
     return render(request, "portale/misuratore_detail.html", context)
 
-
+@login_required
 def led_status_api(request):
     rows = (
         tab_measurements_clean.objects

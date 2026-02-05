@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'portale/css/style.css' %}" />
     {% block extra_head %}{% endblock %}
   </head>
-  <body>
+  <body class="{% block body_class %}{% endblock %}">
     {% include 'portale/includes/header.html' %}
         <main class="site-main container">
             {% block content %}{% endblock %}

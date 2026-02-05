@@ -24,6 +24,18 @@
     <ul>
       <li><a href="{% url 'facilities_map' %}">Mappa</a></li>
       <li><a href="{% url 'home'%}">Misuratori</a></li>
+      <li>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="logout-button" aria-label="Logout">
+            <img
+              src="{% static 'portale/images/logout_icon.png' %}"
+              alt=""
+              class="logout-icon"
+            />
+          </button>
+        </form>
+      </li>
     </ul>
   </nav>
 </header>

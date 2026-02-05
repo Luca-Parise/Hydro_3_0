@@ -38,6 +38,8 @@
   --color-red: red;
   --color-border-alpha: rgba(107, 114, 128, 0.35);
   --color-accent-shadow: rgba(37, 99, 235, 0.25);
+  --color-red-light: rgba(220, 38, 38, 0.196);
+  --color-red-dark: #ff000063;
 
   /* Layout */
   --footer-height: 56px;
@@ -1093,4 +1095,40 @@ a:hover {
 .coordinates {
   font-family: monospace;
   font-size: 14px;
+}
+
+
+/* button for logout in header */
+.home-site-header nav .logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: var(--color-red-light);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.home-site-header nav .logout-button:hover {
+  background: var(--color-red-dark);
+  border-color: var(--color-red-dark);
+}
+
+.home-site-header nav .logout-button:focus-visible {
+  outline: 2px solid var(--color-red-dark);
+  outline-offset: 2px;
+}
+
+.home-site-header nav .logout-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* Center login card */
+.login-card {
+  max-width: 420px;
+  margin: 6rem auto 0 auto;
 }
