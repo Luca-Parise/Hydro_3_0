@@ -136,3 +136,13 @@ buildFlowPointsWithGapsShort() // Decimazione off: usa NaN per interrompere line
 - Logica gap: se tra due misure il salto supera 2h (24h/7d/1m) o 3 giorni (6m/1y/all), la linea si interrompe e viene mostrata una banda rossa semitrasparente.
 - Soglia decimazione per flow-chart configurabile (attualmente 1250 punti) e bottone info visibile solo quando attiva.
 - Curva di durata: linea verticale a 80%, linea orizzontale su y=0 e tick solo su 0/80/100 sull'asse X.
+
+## Note Operative - Rete LAN (05/02/2026)
+
+Se il sito funziona sul PC server ma non è raggiungibile da altri PC in rete, le cause tipiche sono:
+
+- **Profilo di rete “Pubblico”**: Windows blocca le connessioni in ingresso.  
+  Imposta la rete come **Privata** in *Impostazioni → Rete e Internet → Proprietà rete*.
+- **Firewall Windows**: serve una regola in ingresso per la porta **8000** (TCP) sul profilo **Privato**.
+- **Ping non funziona**: il ping può essere bloccato anche se il sito è raggiungibile.  
+  Verifica con `Test-NetConnection 192.168.10.23 -Port 8000` dal PC client.

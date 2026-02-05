@@ -40,6 +40,9 @@ Thumbs.db
 *.swp
 *~
 
+# django
+staticfiles/
+
 
 # others 
 *.csv
