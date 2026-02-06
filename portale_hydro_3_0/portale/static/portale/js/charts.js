@@ -654,7 +654,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                 yZeroLineWidth: 2,
                                 dash: [6, 6],
                             }
-                            : {},
+                            : isFlowChart(cfg)
+                                ? {
+                                    yZeroValue: 0,
+                                    yZeroColor: "rgba(31, 41, 55, 0.8)",
+                                    yZeroLineWidth: 2,
+                                    yZeroDash: [8, 4],
+                                }
+                                : {},
                     tooltip: {
                         mode: cfg.type === "bar" ? "nearest" : "index",
                         intersect: false,
@@ -995,12 +1002,19 @@ document.addEventListener("DOMContentLoaded", () => {
                             : maxValue;
 
                         if (chart.options.scales?.y) {
-                            chart.options.scales.y.suggestedMax = boundedMax * 1.1;
-                            if (isDurationCurve(cfg)) {
-                                const boundedMin = Number.isFinite(minValue)
-                                    ? Math.min(minValue, 0)
-                                    : 0;
-                                chart.options.scales.y.suggestedMin = boundedMin;
+                            if (isFlowChart(cfg)) {
+                                // Limite minimo dinamico per il grafico della portata
+                                const hasNegativeValues = Number.isFinite(minValue) && minValue < 0;
+                                chart.options.scales.y.min = hasNegativeValues ? -50 : 0;
+                                chart.options.scales.y.suggestedMax = boundedMax * 1.1;
+                            } else {
+                                chart.options.scales.y.suggestedMax = boundedMax * 1.1;
+                                if (isDurationCurve(cfg)) {
+                                    const boundedMin = Number.isFinite(minValue)
+                                        ? Math.min(minValue, 0)
+                                        : 0;
+                                    chart.options.scales.y.suggestedMin = boundedMin;
+                                }
                             }
                         }
 
