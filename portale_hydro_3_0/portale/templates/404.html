@@ -1,0 +1,19 @@
+<!-- 404 page not found -->
+{% extends "portale/base.html" %}
+{% load static %}
+{% block title %}404 Page Not Found{% endblock %}
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+    <section class="error-wrapper">
+        <div class="error-illustration">
+            <img src="{% static 'portale/images/Otters-swimming-bro.svg' %}" alt="Illustrazione" class="error-illustration-img" />
+        </div>
+        <div class="error-content">
+            <h2>La pagina che stai cercando non è stata trovata.</h2>
+            <p>Controlla l'URL o torna alla <a href="{% url 'home' %}">home</a>.</p>
+            
+        </div>
+    </section>
+{% endblock%}
+

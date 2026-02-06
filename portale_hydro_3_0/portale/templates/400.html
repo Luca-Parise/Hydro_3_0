@@ -1,0 +1,18 @@
+<!-- 400 bad request error page -->
+{% extends "portale/base.html" %}
+{% load static %}
+{% block title %}400 Bad Request{% endblock %}
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+    <section class="error-wrapper">
+        <div class="error-illustration">
+            <img src="{% static 'portale/images/Otters-swimming-bro.svg' %}" alt="Illustrazione" class="error-illustration-img" />
+        </div>
+        <div class="error-content">
+            <h2>Richiesta non valida.</h2>
+            <p>Riprova più tardi o torna alla <a href="{% url 'home' %}">home</a>.</p>
+            
+        </div>
+    </section>
+{% endblock%}

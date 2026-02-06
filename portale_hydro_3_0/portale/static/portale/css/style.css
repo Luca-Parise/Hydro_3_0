@@ -1190,12 +1190,48 @@ a:hover {
 
 /* Hide header controls on login page, keep logo link */
 .login-page #toggle-sidebar,
-.login-page .home-header-nav {
+.login-page .home-header-nav,
+.error-page #toggle-sidebar,
+.error-page .home-header-nav {
   display: none;
 }
 
 /* Disable logo link on login page */
-.login-page .home-site-header .brand {
+.login-page .home-site-header .brand,
+.error-page .home-site-header .brand {
   pointer-events: none;
   cursor: default;
+}
+
+
+
+.error-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem;
+  margin: auto;
+}
+
+.error-illustration {
+  display: flex;
+  justify-content: center;
+}
+
+.error-illustration-img {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+}
+
+.error-content h2 {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .error-wrapper {
+    grid-template-columns: 1fr;
+  }
 }

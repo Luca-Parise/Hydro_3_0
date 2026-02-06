@@ -1,0 +1,21 @@
+<!-- 500 server error page -->
+{% extends "portale/base.html" %}
+{% load static %}
+{% block title %}500 Internal Server Error{% endblock %}
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+    <section class="error-wrapper">
+        <div class="error-illustration">
+            <img src="{% static 'portale/images/Otters-swimming-bro.svg' %}" alt="Illustrazione" class="error-illustration-img" />
+        </div>
+        <div class="error-content">
+            <h2>Si è verificato un errore interno del server.</h2>
+            <p>Riprova più tardi o torna alla <a href="{% url 'home' %}">home</a>.</p>
+            
+        </div>
+    </section>
+{% endblock%}
+
+
+
