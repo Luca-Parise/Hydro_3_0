@@ -12,7 +12,7 @@ DB_PASSWORD = os.getenv("PGPASSWORD", "")
 
 # Ingestion pacing
 HEARTBEAT_SECONDS = int(os.getenv("HEARTBEAT_SECONDS", "60"))
-MIN_SECONDS_BETWEEN_EVENTS = 5  # 5 seconds
+MIN_SECONDS_BETWEEN_EVENTS = 280  # 280 seconds (4 min 40s)
 
 # Scheduler intervals (seconds)
 SECONDS_BETWEEN_RAW_TO_MEASUREMENTS_TRANSFORM = 20  # 20 seconds

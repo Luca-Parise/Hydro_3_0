@@ -1,5 +1,12 @@
-Ultimo update - 29/01/2026
+Ultimo update - 09/02/2026
 
+## Ultimo update - 09/02/2026
+
+### Ottimizzazione Throttling EventHub
+- Aggiornato `MIN_SECONDS_BETWEEN_EVENTS` da 5 a 280 secondi (4 min 40s) in `db_manager/config/settings.py`.
+- **Motivo**: La sorgente EventHub invia già dati ogni 5 minuti, quindi il throttling a 5 secondi era inutilmente frequente.
+- **Benefici**: Riduzione carico CPU, meno lock contention, crescita più lenta dello stato in memoria.
+- **Sicurezza**: Mantiene 20 secondi di buffer rispetto alla frequenza naturale di 5 minuti.
 
 # Problemi principali ancora presenti (non affrontati) 29/01/2026
 
