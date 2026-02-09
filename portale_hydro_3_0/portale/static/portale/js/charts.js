@@ -123,20 +123,22 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < values.length; i += 1) {
             const value = values[i];
             const x = xValues[i];
-            if (value === null || x === null) {
-                points.push(null);
-            } else {
+            if (value !== null && x !== null && Number.isFinite(value) && Number.isFinite(x)) {
                 points.push({ x, y: value });
-            }
-            const nextX = xValues[i + 1];
-            if (
-                Number.isFinite(x) &&
-                Number.isFinite(nextX) &&
-                nextX - x > gapThresholdMs
-            ) {
-                points.push(
-                    useMidpointNull ? { x: x + (nextX - x) / 2, y: null } : null,
-                );
+                
+                // Check for gaps only when we have valid data
+                const nextX = xValues[i + 1];
+                const nextValue = values[i + 1];
+                if (
+                    Number.isFinite(nextX) &&
+                    nextValue !== null &&
+                    nextX - x > gapThresholdMs
+                ) {
+                    // Add gap indicator point only if using midpoint nulls
+                    if (useMidpointNull) {
+                        points.push({ x: x + (nextX - x) / 2, y: NaN });
+                    }
+                }
             }
         }
         return points;
@@ -149,25 +151,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const value = values[i];
             const x = xValues[i];
             
-            // Aggiungi il punto corrente se valido
-            if (value !== null && x !== null) {
+            // Add current point if valid
+            if (value !== null && x !== null && Number.isFinite(value) && Number.isFinite(x)) {
                 points.push({ x, y: value });
-            }
-            
-            // Controlla se c'è un gap con il prossimo punto
-            if (i < values.length - 1) {
-                const nextX = xValues[i + 1];
-                const nextValue = values[i + 1];
                 
-                if (
-                    Number.isFinite(x) &&
-                    Number.isFinite(nextX) &&
-                    nextX - x > gapThresholdMs &&
-                    value !== null &&
-                    nextValue !== null
-                ) {
-                    // Inserisci un punto con y: NaN per interrompere la linea
-                    points.push({ x: x + (nextX - x) / 2, y: NaN });
+                // Check for gaps with next point
+                if (i < values.length - 1) {
+                    const nextX = xValues[i + 1];
+                    const nextValue = values[i + 1];
+                    
+                    if (
+                        Number.isFinite(nextX) &&
+                        nextX - x > gapThresholdMs &&
+                        nextValue !== null
+                    ) {
+                        // Insert a point with y: NaN to break the line
+                        points.push({ x: x + (nextX - x) / 2, y: NaN });
+                    }
                 }
             }
         }
@@ -250,7 +250,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             const { ctx, chartArea } = chart;
-            const x = active[0].element.x;
+            const activeElement = active[0];
+            if (!activeElement || !activeElement.element || typeof activeElement.element.x !== 'number') {
+                return;
+            }
+            const x = activeElement.element.x;
             ctx.save();
             ctx.beginPath();
             ctx.moveTo(x, chartArea.top);
@@ -939,11 +943,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             chart.data.datasets[index].data = useXYPoints
                                 ? parsedValues.map((value, i) => {
                                     const x = xValues[i];
-                                    return value === null || x === null
+                                    return value === null || x === null || !Number.isFinite(value) || !Number.isFinite(x)
                                         ? null
                                         : { x, y: value };
-                                })
-                                : parsedValues;
+                                }).filter(point => point !== null)
+                                : parsedValues.filter(value => value !== null && Number.isFinite(value));
                         });
 
                         if (!isHistogram(cfg) && !isFlowChart(cfg)) {
